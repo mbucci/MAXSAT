@@ -13,14 +13,17 @@ import java.io.*;
 import java.util.*;
 
 
-public class MAXSAT {
+public class MAXSAT{
+	
+	//Algorithm Instances
+	private static PBIL runner = new PBIL();
 
 	//File Variables
 	private static BufferedReader reader = null;
 	private static File file;
 	private static int numVariables = 0;
 	private static int numClauses = 0;
-	private static List<int[]> cnf = new ArrayList<int[]>();
+	private static List<CNF> cnf = new ArrayList<CNF>();
 
 	
 	//General Variables
@@ -55,6 +58,8 @@ public class MAXSAT {
 			crossoverProb = Double.parseDouble(args[4]);
 			mutationProb = Double.parseDouble(args[5]);
 			readFile(file);
+			runner.runPBIL(cnf, numClauses, numVariables, individuals, posLearnRate, negLearnRate, mutationProb, mutationAmount, iterations);
+			
 			
 		} else if (algorithm.equals("p")) {
 			posLearnRate = Double.parseDouble(args[2]);
@@ -77,13 +82,17 @@ public class MAXSAT {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				if (!(line.charAt(0) == 'c')) {
-					int[] temp = new int[2];
-					String[] splitStr = line.split("\\s+");
 					
+					String[] splitStr = line.split("\\s+");
 					if (numVariables != 0 && numClauses != 0) {
-						temp[0] = Integer.parseInt(splitStr[0]);
-						temp[1] = Integer.parseInt(splitStr[1]);
-						cnf.add(temp);
+						
+						int[] temp = new int[splitStr.length - 1];
+						
+						for (int i = 0; i < temp.length; i++) {
+							temp[i] = Integer.parseInt(splitStr[i]);
+						}
+						CNF clause = new CNF(temp, temp.length);
+						cnf.add(clause);
 					}
 					if(numVariables == 0) numVariables = Integer.parseInt(splitStr[2]);
 					if(numClauses == 0) numClauses = Integer.parseInt(splitStr[3]);
