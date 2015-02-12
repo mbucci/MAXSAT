@@ -54,18 +54,19 @@ public class MAXSAT{
 		iterations = Integer.parseInt(args[6]);
 		algorithm = args[7];
 		
-		if(algorithm.equals("g")) {
+		if(algorithm.equals("p")) {
 			selectionMethod = args[2];
 			crossoverMethod = args[3];
 			crossoverProb = Double.parseDouble(args[4]);
 			mutationProb = Double.parseDouble(args[5]);
+			
 			readFile(file);
-			System.out.println(numClauses);
 			runner = new PBIL(individuals, posLearnRate, negLearnRate, mutationProb, mutationAmount, iterations);
 			runner.runPBIL(cnf, numClauses, numVariables);
+			runner.printResults(args[0], numClauses, numVariables);
 			
 			
-		} else if (algorithm.equals("p")) {
+		} else if (algorithm.equals("g")) {
 			posLearnRate = Double.parseDouble(args[2]);
 			negLearnRate = Double.parseDouble(args[3]);
 			mutationProb = Double.parseDouble(args[4]);
