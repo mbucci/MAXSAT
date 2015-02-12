@@ -16,14 +16,16 @@ import java.util.*;
 public class MAXSAT{
 	
 	//Algorithm Instances
-	private static PBIL runner = new PBIL();
+	private static PBIL runner;
 
 	//File Variables
 	private static BufferedReader reader = null;
 	private static File file;
+	
+	//CNF variables 
+	private static List<CNF> cnf = new ArrayList<CNF>();
 	private static int numVariables = 0;
 	private static int numClauses = 0;
-	private static List<CNF> cnf = new ArrayList<CNF>();
 
 	
 	//General Variables
@@ -58,7 +60,9 @@ public class MAXSAT{
 			crossoverProb = Double.parseDouble(args[4]);
 			mutationProb = Double.parseDouble(args[5]);
 			readFile(file);
-			runner.runPBIL(cnf, numClauses, numVariables, individuals, posLearnRate, negLearnRate, mutationProb, mutationAmount, iterations);
+			System.out.println(numClauses);
+			runner = new PBIL(individuals, posLearnRate, negLearnRate, mutationProb, mutationAmount, iterations);
+			runner.runPBIL(cnf, numClauses, numVariables);
 			
 			
 		} else if (algorithm.equals("p")) {

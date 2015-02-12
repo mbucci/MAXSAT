@@ -15,11 +15,15 @@ public class CNF {
 		this.clause = c;
 	}
 	
-	public int evaluateClause(Boolean[] evalArray) {
+	public int evaluateClause(int[] evalArray) {
 		
 		int count = 0;
 		for(int i = 0; i < this.size; i++) {
-			if (evalArray[this.clause[i]]) count++;
+			if (this.clause[i] < 0) {
+				if(evalArray[-this.clause[i]] == 0) count++;	
+			} else {
+				if (evalArray[this.clause[i]] == 1) count++;
+			}
 		}
 		
 		if (count >= 1) return 1;
