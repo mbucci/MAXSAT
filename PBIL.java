@@ -112,10 +112,12 @@ public class PBIL{
 		System.out.println("Number of Clauses: " + numC);
 		System.out.println("Number of Variables: " + numV);
 		System.out.println("--------------------------------------");
-		System.out.format("Clauses satisfied: %d -> %%%.1f\n", bestScore, percent*100);
+		System.out.format("Clauses satisfied: %d -> %.1f%%\n", bestScore, percent*100);
 		System.out.print("Assignment: ");
 		printIndividual(bestIndividual, numV);
 		System.out.println("Found in iteration: " + bestIteration);
+		System.out.println();
+		//printProbVector(numV);
 	}
 	
 	private static void printIndividual(int[] indiv, int numV) {
@@ -123,6 +125,14 @@ public class PBIL{
 		for (int i = 1; i <= numV; i++) {
 			if (indiv[i] == 1) System.out.print(i + " ");
 			else System.out.print("-" + i + " ");	
+		}
+		System.out.println();
+	}
+	
+	private static void printProbVector(int numV) {
+		
+		for (int i = 1; i <= numV; i++) {
+			System.out.format("%.4f ", probVector[i]);	
 		}
 		System.out.println();
 	}

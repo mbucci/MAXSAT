@@ -55,10 +55,10 @@ public class MAXSAT{
 		algorithm = args[7];
 		
 		if(algorithm.equals("p")) {
-			selectionMethod = args[2];
-			crossoverMethod = args[3];
-			crossoverProb = Double.parseDouble(args[4]);
-			mutationProb = Double.parseDouble(args[5]);
+			posLearnRate = Double.parseDouble(args[2]);
+			negLearnRate = Double.parseDouble(args[3]);
+			mutationProb = Double.parseDouble(args[4]);
+			mutationAmount = Double.parseDouble(args[5]);
 			
 			readFile(file);
 			runner = new PBIL(individuals, posLearnRate, negLearnRate, mutationProb, mutationAmount, iterations);
@@ -67,10 +67,11 @@ public class MAXSAT{
 			
 			
 		} else if (algorithm.equals("g")) {
-			posLearnRate = Double.parseDouble(args[2]);
-			negLearnRate = Double.parseDouble(args[3]);
-			mutationProb = Double.parseDouble(args[4]);
-			mutationAmount = Double.parseDouble(args[5]);
+			selectionMethod = args[2];
+			crossoverMethod = args[3];
+			crossoverProb = Double.parseDouble(args[4]);
+			mutationProb = Double.parseDouble(args[5]);
+			
 			readFile(file);
 			
 		} else {
