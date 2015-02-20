@@ -1,5 +1,6 @@
 /*
  * MAXSAT solver 
+ * Solves a inputed CNF file using either a PBIL or GA approach
  *
  * NIC - Professor Majercik
  * Max Bucci, Nikki Morin, Megan Maher, Kuangji Chen
@@ -45,7 +46,8 @@ public class MAXSAT{
 	private static double negLearnRate;
 	private static double mutationAmount;
 
-		
+
+	//Main method
 	public static void main(String[] args) {
 		
 		file = new File(args[0]);
@@ -55,29 +57,25 @@ public class MAXSAT{
 		iterations = Integer.parseInt(args[6]);
 		algorithm = args[7];
 		
+		//PBIL
 		if(algorithm.equals("p")) {
-			selectionMethod = args[2];
-			crossoverMethod = args[3];
-			crossoverProb = Double.parseDouble(args[4]);
-			mutationProb = Double.parseDouble(args[5]);
+			posLearnRate = Double.parseDouble(args[2]);
+			negLearnRate = Double.parseDouble(args[3]);
+			mutationProb = Double.parseDouble(args[4]);
+			mutationAmount = Double.parseDouble(args[5]);
 			
 			readFile(file);
 			runner = new PBIL(individuals, posLearnRate, negLearnRate, mutationProb, mutationAmount, iterations);
 			runner.runPBIL(cnf, numClauses, numVariables);
 			runner.printResults(args[0], numClauses, numVariables);
 			
-			
+		
+		//GA
 		} else if (algorithm.equals("g")) {
 			selectionMethod = args[2];
 			crossoverMethod = args[3];
 			crossoverProb = Double.parseDouble(args[4]);
-			mutationProb = Double.parseDouble(args[5]);
-
-			// posLearnRate = Double.parseDouble(args[2]);
-			// negLearnRate = Double.parseDouble(args[3]);
-			// mutationProb = Double.parseDouble(args[4]);
-			// mutationAmount = Double.parseDouble(args[5]);
-			
+			mutationProb = Double.parseDouble(args[5]);			
 			readFile(file);
 
 			gaRunner = new GA(individuals, mutationProb, iterations, selectionMethod, crossoverMethod, crossoverProb);
@@ -91,6 +89,7 @@ public class MAXSAT{
 	}
 	
 	
+	//Read a given CNF file and construct a list of CNF clauses from it. 
 	public static void readFile(File f) {
 		
 		try {

@@ -1,4 +1,13 @@
-
+/*
+ * GA algorithm
+ * Solves and inputted CNF using GA
+ *
+ * NIC - Professor Majercik
+ *Nikki Morin, Megan Maher, Kuangji Chen
+ * Created: 2/12/15
+ * Last Modified: 2/20/15
+ *
+ */
 
 import java.io.*;
 import java.util.*;
