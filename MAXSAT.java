@@ -1,10 +1,11 @@
 /*
  * MAXSAT solver 
+ * Solves a inputed CNF file using either a PBIL or GA approach
  *
  * NIC - Professor Majercik
  * Max Bucci, Nikki Morin, Megan Maher, Kuangji Chen
  * Created: 2/11/15
- * Last Modified: 2/11/15
+ * Last Modified: 2/20/15
  *
  */
 
@@ -17,6 +18,7 @@ public class MAXSAT{
 	
 	//Algorithm Instances
 	private static PBIL runner;
+	private static GA gaRunner;
 
 	//File Variables
 	private static BufferedReader reader = null;
@@ -44,7 +46,8 @@ public class MAXSAT{
 	private static double negLearnRate;
 	private static double mutationAmount;
 
-		
+
+	//Main method
 	public static void main(String[] args) {
 		
 		file = new File(args[0]);
@@ -54,6 +57,7 @@ public class MAXSAT{
 		iterations = Integer.parseInt(args[6]);
 		algorithm = args[7];
 		
+		//PBIL
 		if(algorithm.equals("p")) {
 			posLearnRate = Double.parseDouble(args[2]);
 			negLearnRate = Double.parseDouble(args[3]);
@@ -65,14 +69,18 @@ public class MAXSAT{
 			runner.runPBIL(cnf, numClauses, numVariables);
 			runner.printResults(args[0], numClauses, numVariables);
 			
-			
+		
+		//GA
 		} else if (algorithm.equals("g")) {
 			selectionMethod = args[2];
 			crossoverMethod = args[3];
 			crossoverProb = Double.parseDouble(args[4]);
-			mutationProb = Double.parseDouble(args[5]);
-			
+			mutationProb = Double.parseDouble(args[5]);			
 			readFile(file);
+
+			gaRunner = new GA(individuals, mutationProb, iterations, selectionMethod, crossoverMethod, crossoverProb);
+			gaRunner.runGA(cnf, numClauses, numVariables);
+			gaRunner.printResults(args[0], numClauses, numVariables);
 			
 		} else {
 			System.out.println("Incorrect input type\n");
@@ -81,6 +89,7 @@ public class MAXSAT{
 	}
 	
 	
+	//Read a given CNF file and construct a list of CNF clauses from it. 
 	public static void readFile(File f) {
 		
 		try {

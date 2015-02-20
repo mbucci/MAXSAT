@@ -1,4 +1,13 @@
-
+/*
+ * PBIL algorithm
+ * Solves and inputted CNF using PBIL
+ *
+ * NIC - Professor Majercik
+ * Max Bucci
+ * Created: 2/11/15
+ * Last Modified: 2/20/15
+ *
+ */
 
 import java.io.*;
 import java.util.*;
@@ -29,6 +38,8 @@ public class PBIL{
 	//Random Number Generator
 	private static Random rand = new Random();
 	
+	
+	//Constructor, aquires algorithm constants
 	public PBIL(int numInd, double posLearn, double negLearn, double mutProb, double mutAmt, int iter) {
 		
 		numIndividuals = numInd;
@@ -40,12 +51,17 @@ public class PBIL{
 	}
 	
 	
+	//Initialize the probability vector to 0.5. Note that the size of
+	//the vector is one great than the number of variables. This is done
+	//So that the index of the vector can be used as the variable number. 
 	private static void initProbVector(int numV) {
 		
 		probVector = new double[numV+1];
 		Arrays.fill(probVector, 0.5);
 	}
 	
+	
+	//Initialize individuals
 	private static void initIndividuals(int numV) {
 		
 		individuals = new int[numIndividuals][numV+1];
@@ -57,6 +73,10 @@ public class PBIL{
 		}
 	}
 	
+	
+	//Workhouse of the class, takes file specific paramters (the CNF, number
+	//or variable and number of clauses) and runs the PBIL algorithm on the
+	//CNF using previously provided constants.
 	public static void runPBIL(List<CNF> cnf, int numC, int numV) {
 				
 		initProbVector(numV);	
@@ -68,6 +88,7 @@ public class PBIL{
 		int count = 1;
 		do {
 			int score = 0;
+			//Generating and evaluating individuals 
 			for (int i = 0; i < numIndividuals; i++) {
 				individuals[i] = generateIndividualWithProb(numV);	
 				score = evaluateIndividual(cnf, numC, i);
@@ -82,16 +103,21 @@ public class PBIL{
 				}
 			}
 			
+			
+			//Update towards the best individual
 			for (int i = 1; i <= numV; i++) {
 				probVector[i] = (probVector[i]*(1.0-posLearnRate)) + (bestIndividual[i]*posLearnRate);
 			}
 			
+			
+			//Update away from the worst individual
 			for (int i = 1; i <= numV; i++) {
 				if (bestIndividual[i] != worstIndividual[i]) {
 					probVector[i] = (probVector[i]*(1.0-negLearnRate)) + (bestIndividual[i]*negLearnRate);
 				}
 			}
 			
+			//Mutate
 			int mutateDirection = 0;
 			for (int i = 1; i <= numV; i++) {
 				if (rand.nextDouble() < mutationProb) {
@@ -105,6 +131,8 @@ public class PBIL{
 		} while (count <= iterations);
 	}
 	
+	
+	//Print the results from PBIL
 	public static void printResults(String fileName, int numC, int numV) {
 		
 		double percent = (double)bestScore / (double)numC;
@@ -120,6 +148,8 @@ public class PBIL{
 		//printProbVector(numV);
 	}
 	
+	
+	//Print a given individuals specific variable assignment
 	private static void printIndividual(int[] indiv, int numV) {
 		
 		for (int i = 1; i <= numV; i++) {
@@ -129,6 +159,8 @@ public class PBIL{
 		System.out.println();
 	}
 	
+	
+	//Print the probability vector, used for debugging. 
 	private static void printProbVector(int numV) {
 		
 		for (int i = 1; i <= numV; i++) {
@@ -137,6 +169,8 @@ public class PBIL{
 		System.out.println();
 	}
 	
+	
+	//Evaluate an individual. Its score is the number of satisfied clauses
 	private static int evaluateIndividual(List<CNF> cnf, int numC, int indiv) {
 		
 		int score = 0;
@@ -148,6 +182,7 @@ public class PBIL{
 	}
 	
 	
+	//Generate an individual from the probability vector 
 	private static int[] generateIndividualWithProb(int numV) {
 		
 		int[] temp = new int[numV+1];
