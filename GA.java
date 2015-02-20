@@ -39,17 +39,21 @@ public class GA {
 
 	private static int tournamentM;
 	private static int tournamentK;
+	private static double eValue;
+	private static int totalScore; //total current score, used to calc percentages
 
 	public GA() {
 
 	}
 
 	public GA(int numIndv, double mutProb, int iters, String selectMethod, String crossMethod, double crossProb) {
+		eValue = Math.E;
 		numIndividuals = numIndv;
 		mutationProb = mutProb;
 		iterations = iters;
 		selectionMethod = selectMethod;
 		crossoverMethod = crossMethod;
+		totalScore = 0;
 		if (crossMethod.equals("uc")) {
 			crossoverType = UNIFORM_CROSSOVER;
 		}
@@ -213,11 +217,12 @@ public class GA {
 	private static int[] boltzmannSelection(List<CNF> cnf, int numC, int numV) {
 		double randomNum;
 		double[] sums = new double[numIndividuals];
-		double currSum = 0;
-		double min_value = Math.exp((double)scores[0]);
+		double currSum = 0.;
+		double min_value = Math.pow(eValue, ((double)scores[0]/totalScore));
 		double max_value = min_value;
+
 		for (int i = 1; i < numIndividuals; i++) {
-			currSum += Math.exp((double)scores[i]);
+			currSum += Math.pow(eValue, ((double)scores[i]/totalScore));
 			sums[i] = currSum;
 			if (currSum < min_value) {
 				min_value = currSum;
@@ -304,6 +309,7 @@ public class GA {
 		initPopulation(numV);
 		while (generationCount <= iterations) {
 			// Evaluate each individual according to the fitness funciton
+			totalScore = 0;
 			for (int i = 0; i < numIndividuals; i++) {
 				score = evaluateIndividual(cnf, numC, i);
 				if (score >= bestScore) {
@@ -312,6 +318,7 @@ public class GA {
 					bestIndividual = individuals[i];
 				}
 				scores[i] = score;
+				totalScore += score;
 			}
 
 			if (selectionMethodInt == RANK)
