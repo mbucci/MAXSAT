@@ -129,6 +129,18 @@ public class GA {
 		return 0;
 	}
 
+	// Called by Boltzmann and Rank selection methods
+	private static int chooseSpecifiedB(double num, double[] array) {
+		// sees where specified num falls in the array
+		for (int i = 0; i < array.length; i++) {
+			if (num < array[i]) {
+				return i;
+			}
+		}
+		System.out.println("ERROR HERE BAD, looking for "+num);
+		return 0;
+	}
+
 	private static int getRanking(int score) {
 		int i = 0;
 		while (rankings[i] != score) {
@@ -199,20 +211,24 @@ public class GA {
 
 	// Weigh individuals according to fitness
 	private static int[] boltzmannSelection(List<CNF> cnf, int numC, int numV) {
-		int randomNum;
-		int[] sums = new int[numIndividuals];
-		int currSum = 0;
-		int min_fitness = scores[0];
+		double randomNum;
+		double[] sums = new double[numIndividuals];
+		double currSum = 0;
+		double min_value = Math.exp((double)scores[0]);
+		double max_value = min_value;
 		for (int i = 1; i < numIndividuals; i++) {
-			currSum += scores[i];
+			currSum += Math.exp((double)scores[i]);
 			sums[i] = currSum;
-			if (scores[i] < min_fitness) {
-				min_fitness = scores[i];
+			if (currSum < min_value) {
+				min_value = currSum;
+			}
+			if (currSum > max_value) {
+				max_value = currSum;
 			}
 		}
 
-		randomNum = rand.nextInt(currSum-min_fitness) + min_fitness;
-		int chosenOne = chooseSpecified(randomNum, sums);
+		randomNum = (rand.nextDouble() * (max_value - min_value)) + min_value;
+		int chosenOne = chooseSpecifiedB(randomNum, sums);
 		return individuals[chosenOne];
 	}
 
@@ -337,3 +353,24 @@ public class GA {
 
 	}
 }
+
+
+
+	// // Weigh individuals according to fitness
+	// private static int[] boltzmannSelection(List<CNF> cnf, int numC, int numV) {
+	// 	int randomNum;
+	// 	int[] sums = new int[numIndividuals];
+	// 	int currSum = 0;
+	// 	int min_fitness = scores[0];
+	// 	for (int i = 1; i < numIndividuals; i++) {
+	// 		currSum += scores[i];
+	// 		sums[i] = currSum;
+	// 		if (scores[i] < min_fitness) {
+	// 			min_fitness = scores[i];
+	// 		}
+	// 	}
+
+	// 	randomNum = rand.nextInt(currSum-min_fitness) + min_fitness;
+	// 	int chosenOne = chooseSpecified(randomNum, sums);
+	// 	return individuals[chosenOne];
+	// }

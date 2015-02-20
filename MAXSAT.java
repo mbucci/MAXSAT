@@ -4,7 +4,7 @@
  * NIC - Professor Majercik
  * Max Bucci, Nikki Morin, Megan Maher, Kuangji Chen
  * Created: 2/11/15
- * Last Modified: 2/11/15
+ * Last Modified: 2/20/15
  *
  */
 
@@ -17,6 +17,7 @@ public class MAXSAT{
 	
 	//Algorithm Instances
 	private static PBIL runner;
+	private static GA gaRunner;
 
 	//File Variables
 	private static BufferedReader reader = null;
@@ -67,11 +68,21 @@ public class MAXSAT{
 			
 			
 		} else if (algorithm.equals("g")) {
-			posLearnRate = Double.parseDouble(args[2]);
-			negLearnRate = Double.parseDouble(args[3]);
-			mutationProb = Double.parseDouble(args[4]);
-			mutationAmount = Double.parseDouble(args[5]);
+			selectionMethod = args[2];
+			crossoverMethod = args[3];
+			crossoverProb = Double.parseDouble(args[4]);
+			mutationProb = Double.parseDouble(args[5]);
+
+			// posLearnRate = Double.parseDouble(args[2]);
+			// negLearnRate = Double.parseDouble(args[3]);
+			// mutationProb = Double.parseDouble(args[4]);
+			// mutationAmount = Double.parseDouble(args[5]);
+			
 			readFile(file);
+
+			gaRunner = new GA(individuals, mutationProb, iterations, selectionMethod, crossoverMethod, crossoverProb);
+			gaRunner.runGA(cnf, numClauses, numVariables);
+			gaRunner.printResults(args[0], numClauses, numVariables);
 			
 		} else {
 			System.out.println("Incorrect input type\n");
