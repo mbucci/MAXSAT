@@ -1,4 +1,49 @@
-Hey guys this is the repo for our MAXSAT lab 
-to copy the repository to your own computer use:
-	 git clone https://github.com/mbucci/MAXSAT
+MAXSAT README
+Max Bucci, Nikki Morin, Megan Maher, Kuangji Chen
+
+Solves an inputed .cnf file using either PBIL or GA depending on what the user specifies. 
+
+Input:
+
+	Basic input:
+
+		Java MAXSAT <filename> *(<parameters>) <algorithm>
+
+	To run PBIL use “p” as the final flag, and use “g” to run GA. PBIL and GA take different parameters to run, 	the parameters for PBIL are:
+
+ 	<num. individuals> <pos. learn rate> <neg. learn rate> <mut. prob> <mut. amount> <num. iterations>
+
+	Example PBIL:
+
+		java MAXSAT t3pm3-5555.spn.cnf 100 0.1 0.075 0.02 0.05 1000 p
+
+	parameters for GA are:
+
+	<num. individuals> <selection method> <crossover method> <crossover prob.> <mut. prob.> <num. iterations>
+
+	Example GA:
+
+		java MAXSAT t3pm3-5555.spn.cnf 100 ts 1c 0.7 0.01 1000 g
+
+
+Output:
+
+	Output will look the same in both cases. It will report the name of the CNF file, the 
+	number of variables and clauses in the CNF, the number and percentage of clauses satisfied 
+	in the best assignment, the best assignment and what iteration that assignment was found in.
+
+	Example:
+
+	Results found for file: MANN_a27.clq.cnf
+	Number of Clauses: 1690
+	Number of Variables: 42
+	--------------------------------------
+	Clauses satisfied: 1286 -> 76.1%
+	Assignment: 1 -2 -3 4 5 -6 7 -8 -9 10 -11 -12 -13 -14 -15 16 17 18 19 20 21 -22 23 -24 -25 26 27 -28 29 30 	-31 32 -33 34 -35 36 -37 -38 39 40 -41 -42 
+	Found in iteration: 1992 
+
+
+
+
+	
 
