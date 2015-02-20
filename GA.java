@@ -22,6 +22,7 @@ public class GA {
 	
 	private static int numIndividuals;
 	private static int[][] individuals;
+	private static int[] scores;
 	private static double mutationProb;
 	private static int iterations;
 	private static String selectionMethod;
@@ -82,10 +83,10 @@ public class GA {
 	private static int[][] crossover(int[] parent1, int[] parent2, int numV) {
 		// long start_time = System.nanoTime();
 		int randomNum;
-		int[][] children = new int[2][numV];
+		int[][] children = new int[2][numV+1];
 		if (crossoverType == UNIFORM_CROSSOVER) {
 			// Each element has a 50% chance of being from one parent or the other
-			for (int i = 0; i < numV; i++) {
+			for (int i = 1; i <= numV; i++) {
 				randomNum = rand.nextInt(2) + 1;
 				if (randomNum == 1) {
 					children[0][i] = parent1[i];
@@ -100,7 +101,7 @@ public class GA {
 		else {
 			// Randomly decide crossover point
 			randomNum = rand.nextInt(numV+1) + 1;
-			for (int i = 0; i < numV; i++) {
+			for (int i = 1; i <= numV; i++) {
 				if (i<randomNum){
 					children[0][i] = parent1[i];
 					children[1][i] = parent2[i];
@@ -119,7 +120,7 @@ public class GA {
 	private static int[] mutate(int[] indiv, int numV) {
 		// long start_time = System.nanoTime();
 		double randomNum;
-		for (int i = 0; i < numV; i++) {
+		for (int i = 1; i <= numV; i++) {
 			randomNum = rand.nextDouble();
 			if (randomNum <= MUTATION_CONST) {
 				if (indiv[i] != 0) indiv[i] = 0;
@@ -141,7 +142,10 @@ public class GA {
 				return i;
 			}
 		}
-		System.out.println("ERROR HERE BAD\n");
+		System.out.println("ERROR HERE BAD, looking for "+num);
+		for (int i = 0; i < array.length; i++) {
+
+		}
 		return 0;
 	}
 
@@ -169,30 +173,30 @@ public class GA {
 		// long start_time = System.nanoTime();
 		// First clear the previous rankings
 		for (int i = 0; i < numIndividuals; i++) {
-			int score = evaluateIndividual(cnf, numC, i);
-			rankings[i] = score;
+			// int score = evaluateIndividual(cnf, numC, i);
+			rankings[i] = scores[i];
 		}
 		Arrays.sort(rankings);
-		haveNotYetRankedGeneration = false;
+		// haveNotYetRankedGeneration = false;
 		// long end_time = System.nanoTime();
 		// System.out.println("RANK GENERATION TIME: " + (end_time-start_time));
 	}
 
 	private static int[] selectionByRanking(List<CNF> cnf, int numC, int numV) {
 		// long start_time = System.nanoTime();
-		if (haveNotYetRankedGeneration) {
-			rankGeneration(cnf, numC);
-			// printranks();
-			// System.out.println("Done\n");
-		}
+		// if (haveNotYetRankedGeneration) {
+		// 	rankGeneration(cnf, numC);
+		// 	// printranks();
+		// 	// System.out.println("Done\n");
+		// }
 
 		int randomNum, score;
 		int[] sums = new int[numIndividuals];
 		int currSum = 0;
 
 		for (int i = 0; i < numIndividuals; i++) {
-			score = evaluateIndividual(cnf, numC, i);
-			currSum+= (getRanking(score) + 1);
+			// score = evaluateIndividual(cnf, numC, i);
+			currSum += (getRanking(scores[i]) + 1);
 			sums[i] = currSum;
 		}
 
@@ -206,6 +210,8 @@ public class GA {
 	private static int[] tournamentRanking(List<CNF> cnf, int numC, int numV) {
 		// long start_time = System.nanoTime();
 		int poolSize = (int)((double)numIndividuals * TOURN_SIZE);
+		if (poolSize < 1) poolSize = 1;
+		// System.out.println("Pool size: "+poolSize);
 		int[] chosen = new int[poolSize];
 		int[][] pool = new int[poolSize][numV+1];
 		int randomNum;
@@ -221,11 +227,17 @@ public class GA {
 		}
 
 		int[] currBestIndiv = pool[0];
-		int currBestScore = evaluateIndividual(cnf, numC, chosen[0]);
+		// int currBestScore = evaluateIndividual(cnf, numC, chosen[0]);
+		int currBestScore = scores[0];
+		int tempScore;
 		for (int i = 1; i < poolSize; i++) {
-			int tempScore = evaluateIndividual(cnf, numC, chosen[i]);
-			if (tempScore > currBestScore) {
-				currBestScore = tempScore;
+			// int tempScore = evaluateIndividual(cnf, numC, chosen[i]);
+			// if (tempScore > currBestScore) {
+			// 	currBestScore = tempScore;
+			// 	currBestIndiv = pool[i];
+			// }
+			if (scores[i] > currBestScore) {
+				currBestScore = scores[i];
 				currBestIndiv = pool[i];
 			}
 		}
@@ -235,32 +247,41 @@ public class GA {
 	}
 
 	private static int[] boltzmannSelection(List<CNF> cnf, int numC, int numV) {
-		long start_time = System.nanoTime();
+		// long start_time = System.nanoTime();
 		int randomNum;
 
-		int[] fitnesses = new int[numIndividuals];
+		// int[] fitnesses = new int[numIndividuals];
 		int[] sums = new int[numIndividuals];
 		int currSum = 0;
-		for (int i = 0; i < numIndividuals; i++) {
-			fitnesses[i] = evaluateIndividual(cnf, numC, i);
-			currSum+=fitnesses[i];
+		// int min_fitness = evaluateIndividual(cnf, numC, 0);
+		int min_fitness = scores[0];
+		for (int i = 1; i < numIndividuals; i++) {
+			// fitnesses[i] = evaluateIndividual(cnf, numC, i);
+			// currSum+=fitnesses[i];
+			currSum += scores[i];
 			sums[i] = currSum;
+			if (scores[i] < min_fitness) {
+				min_fitness = scores[i];
+			}
 		}
 
-		randomNum = rand.nextInt(currSum);
+		randomNum = rand.nextInt(currSum-min_fitness) + min_fitness;
 		int chosenOne = chooseSpecified(randomNum, sums);
-		long end_time = System.nanoTime();
-		System.out.println("BOLTZMANN RANK TIME: " + (end_time-start_time));
+		// long end_time = System.nanoTime();
+		// System.out.println("BOLTZMANN RANK TIME: " + (end_time-start_time));
 		return individuals[chosenOne];
 	}
 
 	private static int evaluateIndividual(List<CNF> cnf, int numC, int indiv) {
 		// long start_time = System.nanoTime();
 		int score = 0;
+		// System.out.println("indiv = " + indiv);
 		for (int i = 0; i < numC; i++) {
+			// System.out.print(i+"=i, ");
 			CNF temp = cnf.get(i);
 			score += temp.evaluateClause(individuals[indiv]);	
 		}
+		// System.out.println();
 		// long end_time = System.nanoTime();
 		// System.out.println("EVALUATE INDIV TIME: " + (end_time-start_time));
 		return score;
@@ -283,7 +304,7 @@ public class GA {
 		individuals = new int[numIndividuals][numV+1];
 		// Initialize all variables to true or false randomly
 		for (int i = 0; i < numIndividuals; i++) {
-			for (int j = 0; j <= numV; j++) {
+			for (int j = 1; j <= numV; j++) {
 				randomNum = rand.nextInt(2);
 				individuals[i][j] = randomNum;	
 			}
@@ -294,7 +315,7 @@ public class GA {
 
 	private static int[] selectParent(List<CNF> cnf, int numC, int numV) {
 		// long start_time = System.nanoTime();
-		int[] parent = new int[numV];
+		int[] parent = new int[numV+1];
 		switch(selectionMethodInt) {
 			case RANK: parent = selectionByRanking(cnf, numC, numV); break;
 			case TOURNAMENT: parent = tournamentRanking(cnf, numC, numV); break;
@@ -325,7 +346,7 @@ public class GA {
 	private static void replaceGeneration(int[][] newGeneration, int numV) {
 		// long start_time = System.nanoTime();
 		for (int i = 0; i < numIndividuals; i++) {
-			for (int j = 0; j < numV; j++) {
+			for (int j = 1; j <= numV; j++) {
 				individuals[i][j] = newGeneration[i][j];
 			}
 		}
@@ -337,7 +358,8 @@ public class GA {
 		// long start_time = System.nanoTime();
 		int generationCount = 1;
 		int score = 0;
-		int[][] newGeneration = new int[numIndividuals][numV];
+		int[][] newGeneration = new int[numIndividuals][numV+1];
+		scores = new int[numIndividuals];
 		double randomNum;
 
 		initPopulation(numV);
@@ -352,15 +374,28 @@ public class GA {
 					bestScore = score;
 					bestIndividual = individuals[i];
 				}
+				scores[i] = score;
 			}
+
+			if (selectionMethodInt == RANK)
+				rankGeneration(cnf, numC);
 
 			// Create the new generation
 			for (int i = 0; i < numIndividuals; i+=2) {
 				int[] parent1 = selectParent(cnf, numC, numV);
 				int[] parent2 = selectParent(cnf, numC, numV);
-				int[][] children = crossover(parent1, parent2, numV);
-				newGeneration[i] = children[0];
-				newGeneration[i+1] = children[1];
+				
+				// preform crossover
+				randomNum = rand.nextDouble();
+				if (randomNum <= crossoverProb) {
+					int[][] children = crossover(parent1, parent2, numV);
+					newGeneration[i] = children[0];
+					newGeneration[i+1] = children[1];
+				} else {
+					newGeneration[i] = parent1;
+					newGeneration[i+1] = parent2;
+				}
+
 
 				// Perform mutation
 				randomNum = rand.nextDouble();
@@ -378,6 +413,10 @@ public class GA {
 			if (selectionMethodInt == RANK) {
 				haveNotYetRankedGeneration = true;
 			}
+
+			// if (generationCount%10==0) {
+			// 	printIndividual(bestIndividual, numV);
+			// }
 		}
 		// long end_time = System.nanoTime();
 		// System.out.println("RUN GA TIME: " + (end_time-start_time));
